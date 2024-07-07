@@ -2,6 +2,8 @@
 
 Bienvenido al sistema de reservas del Hotel "El Horizonte del Llano". Este proyecto proporciona una plataforma para que los usuarios puedan buscar, verificar la disponibilidad y reservar habitaciones en el hotel. El sistema está desarrollado utilizando Streamlit y SQLite para la gestión de datos.
 
+![](/assets/show.png)
+
 ## Tabla de Contenidos
 
 - [Descripción del Proyecto](#descripción-del-proyecto)
