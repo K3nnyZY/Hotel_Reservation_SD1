@@ -15,12 +15,14 @@ def init_db():
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS reservas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_usuario INTEGER,
+        numero_identificacion FLOAT,
+        nombre TEXT,
         id_habitacion INTEGER,
         check_in DATE,
         check_out DATE,
         estado TEXT,
-        info_pago TEXT
+        numero_contacto FLOAT,
+        email TEXT
     )
     ''')
     
@@ -55,13 +57,13 @@ def get_available_rooms(check_in, check_out, tipo_habitacion):
     conn.close()
     return habitaciones
 
-def make_reservation(id_usuario, id_habitacion, check_in, check_out, info_pago):
+def make_reservation(numero_identificacion, nombre, id_habitacion, check_in, check_out, numero_contacto, email):
     conn = sqlite3.connect('data/hotel_reservas_basica.db')
     cursor = conn.cursor()
     cursor.execute('''
-    INSERT INTO reservas (id_usuario, id_habitacion, check_in, check_out, estado, info_pago)
-    VALUES (?, ?, ?, ?, 'confirmada', ?)
-    ''', (id_usuario, id_habitacion, check_in, check_out, info_pago))
+    INSERT INTO reservas (numero_identificacion, nombre, id_habitacion, check_in, check_out, estado, numero_contacto, email)
+    VALUES (?, ?, ?, ?, ?, 'confirmada', ?, ?)
+    ''', (numero_identificacion, nombre, id_habitacion, check_in, check_out, numero_contacto, email))
     
     # Actualizar el estado de la habitación
     cursor.execute('SELECT tipo_habitacion FROM habitaciones WHERE id = ?', (id_habitacion,))

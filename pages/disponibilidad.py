@@ -14,11 +14,19 @@ if not check_in or not check_out or not tipo_habitacion:
 else:
     habitaciones = get_available_rooms(check_in, check_out, tipo_habitacion)
     if habitaciones:
-        st.write("Habitaciones disponibles:")
+        st.write("### Habitaciones disponibles:")
+        
+        # Ordenar habitaciones por número de habitación en orden ascendente
+        habitaciones.sort(key=lambda x: x[0])
+        
         for habitacion in habitaciones:
             camas_disponibles = habitacion[3] - habitacion[4]
-            st.write(f"ID: {habitacion[0]}, Tipo: {habitacion[1]}, Camas Disponibles: {camas_disponibles}")
-            if st.button(f"Reservar {habitacion[0]}"):
+            st.markdown(f"""
+            **Número de Habitación:** {habitacion[0]}  
+            **Tipo:** {habitacion[1]}  
+            **Camas Disponibles:** {camas_disponibles}  
+            """)
+            if st.button("Reservar", key=f"reservar_{habitacion[0]}"):
                 st.session_state['id_habitacion'] = habitacion[0]
                 st.experimental_rerun()  # Redirigir a la página de reserva
     else:
