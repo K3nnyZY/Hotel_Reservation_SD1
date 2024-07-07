@@ -17,14 +17,6 @@ Acacías es uno de los municipios más importantes del departamento del Meta, co
 - **Check-in:** Desde las 3:00 pm
 - **Check-out:** Antes de las 1:00 pm
 
-### Servicios Adicionales
-- **Reserva de parqueadero**
-- **Transporte al pueblo**
-- **Servicio de restaurante**
-- **Servicio de lavandería**
-- **Servicio de guía**
-- **Huéspedes adicionales**
-
 ### Entorno Natural
 Nuestros huéspedes destacan los paisajes que rodean el hotel, convirtiéndolo en un destino soñado para aquellos que buscan tranquilidad y conexión con la naturaleza.
 
