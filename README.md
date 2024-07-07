@@ -74,5 +74,5 @@ Para ejecutar la aplicación, sigue estos pasos:
 ## Tecnologías Utilizadas
 
 - **Frontend:** [Streamlit](https://streamlit.io/)
-- **Backend:** [SQLite](https://www.sqlite.org/)
-- **Lenguaje de Programación:** Python
+- **Backend:** Python
+- **Base de Datos** [SQLite](https://www.sqlite.org/)
