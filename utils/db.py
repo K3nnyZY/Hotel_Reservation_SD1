@@ -25,18 +25,16 @@ def init_db():
     )
     ''')
     
-    # Insertar datos iniciales de las habitaciones (4 ordinarias y 2 compartidas)
     cursor.execute('SELECT COUNT(*) FROM habitaciones')
     if cursor.fetchone()[0] == 0:
         habitaciones_data = [
-            ('King', 1, 0),
-            ('King', 1, 0),
-            ('Individual', 1, 0),
-            ('Individual', 1, 0),
-            ('Compartida', 4, 0),
-            ('Compartida', 4, 0)
+            (101 + i, 'Individual', 1, 0) for i in range(3)
+        ] + [
+            (201 + i, 'King', 1, 0) for i in range(3)
+        ] + [
+            (301 + i, 'Compartida', 4, 0) for i in range(3)
         ]
-        cursor.executemany('INSERT INTO habitaciones (tipo_habitacion, camas, camas_ocupadas) VALUES (?, ?, ?)', habitaciones_data)
+        cursor.executemany('INSERT INTO habitaciones (id, tipo_habitacion, camas, camas_ocupadas) VALUES (?, ?, ?, ?)', habitaciones_data)
     
     conn.commit()
     conn.close()
@@ -45,27 +43,19 @@ def get_available_rooms(check_in, check_out, tipo_habitacion):
     conn = sqlite3.connect('data/hotel_reservas_basica.db')
     cursor = conn.cursor()
     
-    # Habitaciones disponibles para las fechas dadas
-    if tipo_habitacion == 'Compartida':
-        cursor.execute('''
-        SELECT h.id, h.tipo_habitacion, h.camas, h.camas_ocupadas, 
-               (SELECT COUNT(*) FROM reservas r 
-                WHERE r.id_habitacion = h.id 
-                  AND ((r.check_in <= ? AND r.check_out >= ?) 
-                       OR (r.check_in >= ? AND r.check_out <= ?))) as camas_ocupadas_periodo 
-        FROM habitaciones h 
-        WHERE h.tipo_habitacion = ? 
-        GROUP BY h.id, h.tipo_habitacion, h.camas, h.camas_ocupadas 
-        HAVING h.camas - camas_ocupadas_periodo > 0
-        ''', (check_out, check_in, check_in, check_out, tipo_habitacion))
-    else:
-        cursor.execute('''
-        SELECT id, tipo_habitacion, camas, camas_ocupadas FROM habitaciones 
-        WHERE tipo_habitacion = ? AND id NOT IN (
-            SELECT id_habitacion FROM reservas
-            WHERE (check_in BETWEEN ? AND ?) OR (check_out BETWEEN ? AND ?) OR (? BETWEEN check_in AND check_out) OR (? BETWEEN check_in AND check_out)
-        )
-        ''', (tipo_habitacion, check_in, check_out, check_in, check_out, check_in, check_out))
+    cursor.execute('''
+    SELECT h.id, h.tipo_habitacion, h.camas, h.camas_ocupadas, 
+           (SELECT COUNT(*) FROM reservas r 
+            WHERE r.id_habitacion = h.id 
+              AND ((r.check_in <= ? AND r.check_out >= ?) 
+                   OR (r.check_in >= ? AND r.check_out <= ?)
+                   OR (? BETWEEN r.check_in AND r.check_out)
+                   OR (? BETWEEN r.check_in AND r.check_out))) as camas_ocupadas_periodo 
+    FROM habitaciones h 
+    WHERE h.tipo_habitacion = ? 
+    GROUP BY h.id, h.tipo_habitacion, h.camas, h.camas_ocupadas 
+    HAVING h.camas - camas_ocupadas_periodo > 0
+    ''', (check_out, check_in, check_in, check_out, check_in, check_out, tipo_habitacion))
     
     habitaciones_disponibles = cursor.fetchall()
     conn.close()

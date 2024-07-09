@@ -21,11 +21,8 @@ else:
         habitaciones_disponibles.sort(key=lambda x: x[0])
         
         for habitacion in habitaciones_disponibles:
-            if tipo_habitacion == 'Compartida':
-                camas_ocupadas_periodo = habitacion[4]
-                camas_disponibles = habitacion[2] - camas_ocupadas_periodo
-            else:
-                camas_disponibles = habitacion[2] - habitacion[3]
+            camas_ocupadas_periodo = habitacion[4]
+            camas_disponibles = habitacion[2] - camas_ocupadas_periodo
             st.markdown(f"""
             **Número de Habitación:** {habitacion[0]}  
             **Tipo:** {habitacion[1]}  
