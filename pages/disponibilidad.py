@@ -27,7 +27,7 @@ else:
             **Tipo:** {habitacion[1]}  
             **Camas Disponibles:** {camas_disponibles}  
             """)
-            if st.button(f"Reservar Habitación {habitacion[0]}", key=f"reservar_{habitacion[0]}"):
+            if camas_disponibles > 0 and st.button(f"Reservar Habitación {habitacion[0]}", key=f"reservar_{habitacion[0]}"):
                 st.session_state['id_habitacion'] = habitacion[0]
                 st.session_state['pagina'] = 'reserva'
                 st.experimental_set_query_params(pagina="reserva")

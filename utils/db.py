@@ -45,18 +45,17 @@ def get_available_rooms(check_in, check_out, tipo_habitacion):
     conn = sqlite3.connect('data/hotel_reservas_basica.db')
     cursor = conn.cursor()
     
-    # Habitaciones disponibles para las fechas dadas
     if tipo_habitacion == 'Compartida':
         cursor.execute('''
-        SELECT * FROM habitaciones 
-        WHERE tipo_habitacion = ? AND camas_ocupadas < camas AND id NOT IN (
+        SELECT id, tipo_habitacion, camas, camas_ocupadas FROM habitaciones 
+        WHERE tipo_habitacion = ? AND id NOT IN (
             SELECT id_habitacion FROM reservas
             WHERE (check_in BETWEEN ? AND ?) OR (check_out BETWEEN ? AND ?) OR (? BETWEEN check_in AND check_out) OR (? BETWEEN check_in AND check_out)
         )
         ''', (tipo_habitacion, check_in, check_out, check_in, check_out, check_in, check_out))
     else:
         cursor.execute('''
-        SELECT * FROM habitaciones 
+        SELECT id, tipo_habitacion, camas, camas_ocupadas FROM habitaciones 
         WHERE tipo_habitacion = ? AND id NOT IN (
             SELECT id_habitacion FROM reservas
             WHERE (check_in BETWEEN ? AND ?) OR (check_out BETWEEN ? AND ?) OR (? BETWEEN check_in AND check_out) OR (? BETWEEN check_in AND check_out)
