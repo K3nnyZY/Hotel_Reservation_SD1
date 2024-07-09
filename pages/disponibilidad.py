@@ -12,22 +12,25 @@ tipo_habitacion = st.session_state.get('tipo_habitacion')
 if not check_in or not check_out or not tipo_habitacion:
     st.error("Por favor complete la búsqueda primero.")
 else:
-    habitaciones = get_available_rooms(check_in, check_out, tipo_habitacion)
-    if habitaciones:
-        st.write("### Habitaciones disponibles:")
+    habitaciones_disponibles = get_available_rooms(check_in, check_out, tipo_habitacion)
+    
+    if habitaciones_disponibles:
+        st.write("### Habitaciones disponibles para las fechas seleccionadas:")
         
         # Ordenar habitaciones por número de habitación en orden ascendente
-        habitaciones.sort(key=lambda x: x[0])
+        habitaciones_disponibles.sort(key=lambda x: x[0])
         
-        for habitacion in habitaciones:
-            camas_disponibles = habitacion[3] - habitacion[4]
+        for habitacion in habitaciones_disponibles:
+            camas_disponibles = habitacion[2] - habitacion[3]
             st.markdown(f"""
             **Número de Habitación:** {habitacion[0]}  
             **Tipo:** {habitacion[1]}  
             **Camas Disponibles:** {camas_disponibles}  
             """)
-            if st.button("Reservar", key=f"reservar_{habitacion[0]}"):
+            if st.button(f"Reservar Habitación {habitacion[0]}", key=f"reservar_{habitacion[0]}"):
                 st.session_state['id_habitacion'] = habitacion[0]
+                st.session_state['pagina'] = 'reserva'
+                st.experimental_set_query_params(pagina="reserva")
                 st.experimental_rerun()  # Redirigir a la página de reserva
     else:
         st.write("No hay habitaciones disponibles para las fechas seleccionadas.")

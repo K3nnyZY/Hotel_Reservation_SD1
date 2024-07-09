@@ -32,12 +32,12 @@ descriptions = {
 
 tipo_habitacion = st.selectbox("Tipo de Habitación", ["King", "Individual", "Compartida"])
 
-# Mostrar descripción de la habitación seleccix`onada
+# Mostrar descripción de la habitación seleccionada
 st.write(f"**Descripción:** {descriptions[tipo_habitacion]}")
 
 if st.button("Buscar"):
     st.session_state['check_in'] = check_in
     st.session_state['check_out'] = check_out
     st.session_state['tipo_habitacion'] = tipo_habitacion
-    st.success("Búsqueda realizada con éxito. Verifique la disponibilidad.")
+    st.experimental_set_query_params(pagina="disponibilidad")
     st.experimental_rerun()  # Redirigir a la página de disponibilidad

@@ -7,7 +7,6 @@ def init_db():
     CREATE TABLE IF NOT EXISTS habitaciones (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         tipo_habitacion TEXT,
-        estado TEXT,
         camas INTEGER,
         camas_ocupadas INTEGER
     )
@@ -30,14 +29,14 @@ def init_db():
     cursor.execute('SELECT COUNT(*) FROM habitaciones')
     if cursor.fetchone()[0] == 0:
         habitaciones_data = [
-            ('King', 'disponible', 1, 0),
-            ('King', 'disponible', 1, 0),
-            ('Individual', 'disponible', 1, 0),
-            ('Individual', 'disponible', 1, 0),
-            ('Compartida', 'disponible', 4, 0),
-            ('Compartida', 'disponible', 4, 0)
+            ('King', 1, 0),
+            ('King', 1, 0),
+            ('Individual', 1, 0),
+            ('Individual', 1, 0),
+            ('Compartida', 4, 0),
+            ('Compartida', 4, 0)
         ]
-        cursor.executemany('INSERT INTO habitaciones (tipo_habitacion, estado, camas, camas_ocupadas) VALUES (?, ?, ?, ?)', habitaciones_data)
+        cursor.executemany('INSERT INTO habitaciones (tipo_habitacion, camas, camas_ocupadas) VALUES (?, ?, ?)', habitaciones_data)
     
     conn.commit()
     conn.close()
@@ -45,17 +44,28 @@ def init_db():
 def get_available_rooms(check_in, check_out, tipo_habitacion):
     conn = sqlite3.connect('data/hotel_reservas_basica.db')
     cursor = conn.cursor()
+    
+    # Habitaciones disponibles para las fechas dadas
     if tipo_habitacion == 'Compartida':
         cursor.execute('''
-        SELECT * FROM habitaciones WHERE tipo_habitacion = ? AND camas_ocupadas < camas
-        ''', (tipo_habitacion,))
+        SELECT * FROM habitaciones 
+        WHERE tipo_habitacion = ? AND camas_ocupadas < camas AND id NOT IN (
+            SELECT id_habitacion FROM reservas
+            WHERE (check_in BETWEEN ? AND ?) OR (check_out BETWEEN ? AND ?) OR (? BETWEEN check_in AND check_out) OR (? BETWEEN check_in AND check_out)
+        )
+        ''', (tipo_habitacion, check_in, check_out, check_in, check_out, check_in, check_out))
     else:
         cursor.execute('''
-        SELECT * FROM habitaciones WHERE tipo_habitacion = ? AND estado = 'disponible'
-        ''', (tipo_habitacion,))
-    habitaciones = cursor.fetchall()
+        SELECT * FROM habitaciones 
+        WHERE tipo_habitacion = ? AND id NOT IN (
+            SELECT id_habitacion FROM reservas
+            WHERE (check_in BETWEEN ? AND ?) OR (check_out BETWEEN ? AND ?) OR (? BETWEEN check_in AND check_out) OR (? BETWEEN check_in AND check_out)
+        )
+        ''', (tipo_habitacion, check_in, check_out, check_in, check_out, check_in, check_out))
+    habitaciones_disponibles = cursor.fetchall()
+    
     conn.close()
-    return habitaciones
+    return habitaciones_disponibles
 
 def make_reservation(numero_identificacion, nombre, id_habitacion, check_in, check_out, numero_contacto, email):
     conn = sqlite3.connect('data/hotel_reservas_basica.db')
@@ -72,10 +82,6 @@ def make_reservation(numero_identificacion, nombre, id_habitacion, check_in, che
     if tipo_habitacion == 'Compartida':
         cursor.execute('''
         UPDATE habitaciones SET camas_ocupadas = camas_ocupadas + 1 WHERE id = ?
-        ''', (id_habitacion,))
-    else:
-        cursor.execute('''
-        UPDATE habitaciones SET estado = 'ocupada' WHERE id = ?
         ''', (id_habitacion,))
     
     conn.commit()

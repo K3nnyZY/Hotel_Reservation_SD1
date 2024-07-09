@@ -27,3 +27,8 @@ else:
         else:
             make_reservation(numero_identificacion, nombre, id_habitacion, check_in, check_out, numero_contacto, email)
             st.success("Reserva confirmada")
+            st.session_state['id_habitacion'] = None
+            st.session_state['check_in'] = None
+            st.session_state['check_out'] = None
+            st.session_state['tipo_habitacion'] = None
+            st.experimental_set_query_params(pagina="principal")
