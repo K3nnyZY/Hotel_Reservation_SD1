@@ -31,4 +31,4 @@ else:
             st.session_state['check_in'] = None
             st.session_state['check_out'] = None
             st.session_state['tipo_habitacion'] = None
-            st.experimental_set_query_params(pagina="principal")
+            st.query_params = {"pagina": "principal"}

@@ -45,5 +45,4 @@ if st.button("Buscar"):
     st.session_state['check_out'] = check_out
     st.session_state['tipo_habitacion'] = tipo_habitacion
     st.success("Búsqueda realizada con éxito. Verifique la disponibilidad.")
-    st.experimental_set_query_params(pagina="disponibilidad")
-    st.experimental_rerun()  # Redirigir a la página de disponibilidad
+    st.query_params = {"pagina": "disponibilidad"}
