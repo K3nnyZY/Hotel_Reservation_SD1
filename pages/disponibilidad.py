@@ -12,6 +12,11 @@ tipo_habitacion = st.session_state.get('tipo_habitacion')
 if not check_in or not check_out or not tipo_habitacion:
     st.error("Por favor complete la búsqueda primero.")
 else:
+    st.write(f"**Fechas seleccionadas:**")
+    st.write(f"- **Fecha de Check-in:** {check_in}")
+    st.write(f"- **Fecha de Check-out:** {check_out}")
+    st.write(f"- **Tipo de Habitación:** {tipo_habitacion}")
+
     habitaciones_disponibles = get_available_rooms(check_in, check_out, tipo_habitacion)
     
     if habitaciones_disponibles:
